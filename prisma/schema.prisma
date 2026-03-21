@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id       BigInt  @id @default(autoincrement())
+  password String  @db.VarChar(255)
+  role     String? @db.VarChar(255)
+  username String  @unique(map: "ukr43af9ap4edm43mmtq01oddj6") @db.VarChar(255)
+
+  @@map("users")
+}
+
+model Category {
+  id       BigInt    @id @default(autoincrement())
+  name     String    @unique(map: "ukt8o6pivur7nn124jehx7cygw5") @db.VarChar(100)
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id             BigInt                 @id @default(autoincrement())
+  active         Boolean
+  createdAt      DateTime?              @map("created_at") @db.Timestamp(6)
+  description    String?
+  name           String                 @db.VarChar(255)
+  categoryId     BigInt                 @map("category_id")
+  images         ProductImage[]
+  specifications ProductSpecification[]
+  category       Category               @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkog2rp4qthbtt2lfyhfo32lsw9")
+
+  @@map("products")
+}
+
+model ProductImage {
+  id        BigInt  @id @default(autoincrement())
+  imageUrl  String  @map("image_url") @db.VarChar(255)
+  productId BigInt  @map("product_id")
+  publicId  String  @map("public_id") @db.VarChar(255)
+  product   Product @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkqnq71xsohugpqwf3c9gxmsuy")
+
+  @@map("product_images")
+}
+
+model ProductSpecification {
+  id        BigInt  @id @default(autoincrement())
+  specKey   String  @map("spec_key") @db.VarChar(100)
+  specValue String? @map("spec_value")
+  productId BigInt  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkbets5sov4bn9d2wy8vqathw6d")
+
+  @@map("product_specifications")
+}
