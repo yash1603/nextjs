@@ -11,7 +11,7 @@ export async function GET() {
       specifications: true,
       images: true
     },
-    orderBy: { id: "desc" }
+    orderBy: { id: "asc" }
   });
 
   return NextResponse.json(products);
